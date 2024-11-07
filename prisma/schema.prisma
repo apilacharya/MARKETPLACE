@@ -14,8 +14,9 @@ datasource db {
 }
 
 enum Role {
-  ADMIN
+  SELLER
   USER
+  ADMIN
 }
 
 model User {
