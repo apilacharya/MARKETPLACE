@@ -1,9 +1,10 @@
-import { hashSync } from "bcrypt";
+import { compareSync, hashSync } from "bcrypt";
 import { NextFunction, Request, Response } from "express";
 import { SignupSchema } from "../schema/users";
 import { prismaClient } from "..";
 import { BadRequestsException } from "../exceptions/bad-requests";
 import { ErrorCode } from "../exceptions/root";
+import { NotFoundException } from "../exceptions/not-found";
 
 export const signup = async (
   req: Request,
@@ -28,4 +29,28 @@ export const signup = async (
     },
   });
   res.json(user);
+};
+
+export const login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { email, password } = req.body;
+  let user = await prismaClient.user.findFirst({
+    where: { email },
+  });
+
+  if (!user) {
+    throw new NotFoundException("User not found", ErrorCode.USER_NOT_FOUND);
+  }
+
+  if (!compareSync(password, user.password)) {
+    throw new BadRequestsException(
+      "Invalid password mate!",
+      ErrorCode.INCORRECT_PASSWORD
+    );
+  }
+
+  const token = jwt;
 };
