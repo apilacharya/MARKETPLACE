@@ -2,9 +2,11 @@ import { compareSync, hashSync } from "bcrypt";
 import { NextFunction, Request, Response } from "express";
 import { SignupSchema } from "../schema/users";
 import { prismaClient } from "..";
+import * as jwt from "jsonwebtoken";
 import { BadRequestsException } from "../exceptions/bad-requests";
 import { ErrorCode } from "../exceptions/root";
 import { NotFoundException } from "../exceptions/not-found";
+import { JWT_SECRET } from "../secrets";
 
 export const signup = async (
   req: Request,
@@ -52,5 +54,12 @@ export const login = async (
     );
   }
 
-  const token = jwt;
+  const token = jwt.sign(
+    {
+      userId: user.id,
+    },
+    JWT_SECRET
+  );
+
+  res.json({ user, token });
 };
