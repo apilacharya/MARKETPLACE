@@ -1,3 +1,5 @@
+import { logger } from "../lib/logger";
+
 export class HttpException extends Error {
   public message: string;
   public errorCode: ErrorCode;
@@ -10,6 +12,7 @@ export class HttpException extends Error {
     statusCode: number,
     errors: any
   ) {
+    logger.error(message);
     super(message);
     this.message = message;
     this.errorCode = errorCode;
