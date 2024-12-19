@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -34,8 +31,13 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  products Product[]
+  products        Product[]
+  productComments ProductComment[]
 
+  reviewsGiven    Review[] @relation("ReviewGiver") // Only buyers can give reviews
+  reviewsReceived Review[] @relation("ReviewReceiver") // Only sellers can receive reviews
+
+  @@index([role])
   @@map("users")
 }
 
@@ -51,6 +53,8 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  productComments ProductComment[] // Comments on the product
+
   @@map("products")
 }
 
@@ -60,4 +64,34 @@ model Category {
   createdAt DateTime @default(now())
 
   @@map("categories")
+}
+
+model ProductComment {
+  id        Int      @id @default(autoincrement())
+  content   String   @db.Text
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@map("product_comments")
+}
+
+model Review {
+  id          Int    @id @default(autoincrement())
+  rating      Int    @default(1) // Rating out of 5
+  description String @db.Text
+
+  buyerId Int
+  buyer   User @relation("ReviewGiver", fields: [buyerId], references: [id])
+
+  sellerId Int
+  seller   User @relation("ReviewReceiver", fields: [sellerId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([buyerId])
+  @@index([sellerId])
+  @@map("reviews")
 }
