@@ -135,3 +135,49 @@ export const listCategory = async (req: Request, res: Response) => {
   const categories = await prismaClient.category.findMany();
   res.json(categories);
 };
+
+export const createProductComment = async (req: Request, res: Response) => {
+  const comment = await prismaClient.productComment.create({
+    data: {
+      ...req.body,
+      productId: +req.params.id,
+      userId: req.user!.id,
+    },
+  });
+  res.json(comment);
+};
+
+export const updateProductComment = async (req: Request, res: Response) => {
+  const comment = await prismaClient.productComment.update({
+    where: {
+      id: +req.params.commentId,
+    },
+    data: {
+      ...req.body,
+    },
+  });
+  res.json(comment);
+};
+
+export const deleteProductComment = async (req: Request, res: Response) => {
+  const comment = await prismaClient.productComment.delete({
+    where: {
+      id: +req.params.commentId,
+    },
+  });
+  res.json({ comment, status: "DELETED" });
+};
+
+export const getProductComments = async (req: Request, res: Response) => {
+  const count = await prismaClient.productComment.count({
+    where: {
+      productId: +req.params.id,
+    },
+  });
+  const comments = await prismaClient.productComment.findMany({
+    where: {
+      productId: +req.params.id,
+    },
+  });
+  res.json({ count, comments });
+};

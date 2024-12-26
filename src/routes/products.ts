@@ -8,6 +8,10 @@ import {
   deleteProduct,
   getProducts,
   updateProduct,
+  createProductComment,
+  updateProductComment,
+  deleteProductComment,
+  getProductComments,
 } from "./../controllers/products";
 import { Router } from "express";
 import authMiddleware from "../middlewares/auth";
@@ -58,6 +62,30 @@ productRoutes.delete(
   "/category/:id",
   [authMiddleware, adminMiddleware],
   errorHandler(deleteCategory)
+);
+
+productRoutes.post(
+  "/:id/comments/",
+  [authMiddleware],
+  errorHandler(createProductComment)
+);
+
+productRoutes.put(
+  "/:id/comments/:commentId",
+  [authMiddleware],
+  errorHandler(updateProductComment)
+);
+
+productRoutes.delete(
+  "/:id/comments/:commentId",
+  [authMiddleware],
+  errorHandler(deleteProductComment)
+);
+
+productRoutes.get(
+  "/:id/comments",
+  [authMiddleware],
+  errorHandler(getProductComments)
 );
 
 export default productRoutes;
