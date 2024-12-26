@@ -17,22 +17,3 @@ export const CategorySchema = z.object({
   name: z.string(),
 });
 
-// model Product {
-//     id          Int      @id @default(autoincrement())
-//     name        String
-//     description String   @db.Text
-//     price       Decimal
-//     category    Int
-//     status      Status   @default(AVAILABLE)
-//     userId      Int
-//     user        User     @relation(fields: [userId], references: [id])
-//     createdAt   DateTime @default(now())
-//     updatedAt   DateTime @updatedAt
-
-//     @@map("products")
-//   }
-
-//   model Category {
-//     id        Int      @id @default(autoincrement())
-//     name      String
-//     createdAt DateTime @default(now())
