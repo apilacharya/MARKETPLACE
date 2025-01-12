@@ -181,3 +181,8 @@ export const getProductComments = async (req: Request, res: Response) => {
   });
   res.json({ count, comments });
 };
+
+
+export const uploadProductImages = async(req: Request, res: Response) => {
+  
+}
