@@ -7,7 +7,11 @@ import {
   getAllReviewsOfBuyer,
   getAllReviewsofSeller,
   deleteReview,
+  uploadProfileImage,
+  getProfileImage,
+  updateProfileImage,
 } from "../controllers/profile";
+import { multerConfig } from "../lib/multer";
 
 const profileRoutes: Router = Router();
 
@@ -35,6 +39,22 @@ profileRoutes.delete(
   "/reviews/:id",
   [authMiddleware],
   errorHandler(deleteReview)
+);
+
+profileRoutes.post(
+  "/image",
+  [authMiddleware],
+  multerConfig.single("image"),
+  errorHandler(uploadProfileImage)
+);
+
+profileRoutes.get("/image/:userId", errorHandler(getProfileImage));
+
+profileRoutes.put(
+  "/image",
+  [authMiddleware],
+  multerConfig.single("image"),
+  errorHandler(updateProfileImage)
 );
 
 export default profileRoutes;
