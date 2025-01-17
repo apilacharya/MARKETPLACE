@@ -12,6 +12,8 @@ import {
   updateProductComment,
   deleteProductComment,
   getProductComments,
+  uploadProductImages,
+  getProductImages,
 } from "./../controllers/products";
 import { Router } from "express";
 import authMiddleware from "../middlewares/auth";
@@ -19,6 +21,7 @@ import { errorHandler } from "../error-handler";
 
 import sellerMiddleware from "../middlewares/seller";
 import adminMiddleware from "../middlewares/admin";
+import { multerConfig } from "../lib/multer";
 
 const productRoutes: Router = Router();
 
@@ -86,6 +89,19 @@ productRoutes.get(
   "/:id/comments",
   [authMiddleware],
   errorHandler(getProductComments)
+);
+
+productRoutes.post(
+  "/:id/images",
+  [authMiddleware],
+  multerConfig.array("files"),
+  errorHandler(uploadProductImages)
+);
+
+productRoutes.get(
+  "/:id/images",
+  [authMiddleware],
+  errorHandler(getProductImages)
 );
 
 export default productRoutes;
