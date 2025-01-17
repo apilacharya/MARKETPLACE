@@ -2,6 +2,7 @@ import { prismaClient } from "..";
 import { NotFoundException } from "../exceptions/not-found";
 import { ErrorCode } from "../exceptions/root";
 import { UnauthorizedException } from "../exceptions/unauthorized";
+import { Cloudinary, getCloudinaryUrl } from "../lib/cloudinary";
 import { CategorySchema, ProductSchema } from "../schema/products";
 import { Request, Response, NextFunction } from "express";
 
@@ -182,7 +183,31 @@ export const getProductComments = async (req: Request, res: Response) => {
   res.json({ count, comments });
 };
 
+export const uploadProductImages = async (req: Request, res: Response) => {
+  const files = req.files as Express.Multer.File[];
+  const results = [];
+  for (const file of files) {
+    const result = await Cloudinary.upload(file.path);
+    const productImages = await prismaClient.productImages.create({
+      data: {
+        productId: +req.params.id,
+        imageId: result.public_id,
+      },
+    });
+    results.push(result);
+  }
+  res.json(results);
+};
 
-export const uploadProductImages = async(req: Request, res: Response) => {
-  
-}
+export const getProductImages = async (req: Request, res: Response) => {
+  const productImages = await prismaClient.productImages.findMany({
+    where: {
+      productId: +req.params.id,
+    },
+  });
+  const results = [];
+  for (const img of productImages) {
+    results.push(getCloudinaryUrl(`${img.imageId}`));
+  }
+  res.json({ ImageURL: results });
+};
